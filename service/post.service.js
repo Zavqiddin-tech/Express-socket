@@ -2,13 +2,19 @@ const postModel = require("../model/post.model");
 
 class PostServeice {
   async getAll(req, res) {
-    const allPosts = await postModel.find();
+    console.log('test');
+    const limit = parseInt(req.query.limit)
+    console.log(limit);
+
+    const allPosts = await postModel.find().sort({createdAt: -1}).limit(limit);
     return allPosts;
   }
 
   async create(req, res) {
+    console.log(req.user);
     const newPost = await postModel.create({
-      ...req.body
+      ...req.body,
+      user: req.user.id
     });
     return newPost;
   }

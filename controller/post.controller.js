@@ -15,7 +15,7 @@ class PostController {
     try {
       const newPost = await postService.create(req, res);
       const io = getSocketInstance()
-      io.emit('salom', newPost);
+      io.emit('newPost', newPost);
       res.status(200).json(newPost);
     } catch (error) {
       next(error);
