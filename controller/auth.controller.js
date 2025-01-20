@@ -9,7 +9,7 @@ class AuthController {
         activated,
         firstName,
         lastName,
-        company,
+        companyId,
         phone,
         role,
       } = req.body;
@@ -19,7 +19,7 @@ class AuthController {
         activated,
         firstName,
         lastName,
-        company,
+        companyId,
         phone,
         role
       );
@@ -30,6 +30,16 @@ class AuthController {
     }
   }
 
+  async companyRegister(req, res, next) {
+    try {
+      const data = await authService.companyRegister(req.body);
+      return res.json(data);
+    } catch (error) {
+      next(error)
+    }
+  }
+  
+  
   async login(req, res, next) {
     try {
       const { userName, password } = req.body;

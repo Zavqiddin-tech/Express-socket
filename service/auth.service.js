@@ -1,6 +1,7 @@
 const argon2 = require("argon2");
 const tokenService = require("./token.service");
-const userModel = require("../model/user.model");
+const companyModel = require("../model/auth/company.model");
+const userModel = require("../model/auth/user.model");
 const UserDto = require("../dto/user.dto");
 
 class AuthService {
@@ -10,19 +11,23 @@ class AuthService {
     activated,
     firstName,
     lastName,
-    company,
+    companyId,
     phone,
     role
   ) {
-    /* if (role === "admin") {
+    if (role === "admin") {
       throw new Error("admin mavjud");
-    } */
-
+    }
+    // search company
+    const company = await companyModel.findById(companyId);
     const existUser = await userModel.findOne({ userName });
-
+    if (!company) {
+      throw new Error(`Companiya mavjud emas`);
+    }
     if (existUser) {
       throw new Error(`User ${existUser.userName} oldin ro'yxatdan o'tgan`);
     }
+
 
     if (!password) {
       throw new Error(`parol ni ham kiriting`);
@@ -34,18 +39,28 @@ class AuthService {
       activated,
       firstName,
       lastName,
-      company,
+      companyId,
       phone,
       role,
     });
 
-    // token generate
     const userDto = new UserDto(user);
-    const tokens = tokenService.generateToken({ ...userDto });
-    // refresh token save
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+    company.users.push(userDto.id)
+    await company.save()
+    return { userDto };
+  }
 
-    return { user: userDto, ...tokens };
+  async companyRegister(data) {
+    const exitCompany = await companyModel.findOne({
+      companyName: data.companyName,
+    });
+
+    if (exitCompany) {
+      throw new Error(`Bu ${data.companyName} oldin ro'yxatdan o'tgan`);
+    }
+
+    const company = await companyModel.create({ ...data });
+    return company;
   }
 
   async login(userName, password) {
@@ -119,7 +134,7 @@ class AuthService {
       );
       return new UserDto(changedUser);
     } else {
-      throw new Error("Mumkin emas !")
+      throw new Error("Mumkin emas !");
     }
   }
 

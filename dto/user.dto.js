@@ -2,7 +2,7 @@ module.exports = class UserDto {
   id;
   firstName;
   lastName;
-  hospital;
+  companyId;
   phone;
   userName;
   activated;
@@ -12,7 +12,7 @@ module.exports = class UserDto {
     this.id = model._id;
     this.firstName = model.firstName;
     this.lastName = model.lastName;
-    this.hospital = model.hospital;
+    this.companyId = model.companyId;
     this.phone = model.phone;
     this.userName = model.userName;
     this.activated = model.activated;

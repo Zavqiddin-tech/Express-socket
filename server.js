@@ -23,6 +23,9 @@ app.use(cors());
 app.use("/api/auth", require("./routes/auth.route"));
 app.use("/api/post", require("./routes/post.route"));
 
+//  Mieddleware
+app.use(errorMiddleware);
+
 const PORT = process.env.PORT || 8080;
 const bootstrap = async () => {
   try {
