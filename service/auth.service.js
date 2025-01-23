@@ -28,7 +28,6 @@ class AuthService {
       throw new Error(`User ${existUser.userName} oldin ro'yxatdan o'tgan`);
     }
 
-
     if (!password) {
       throw new Error(`parol ni ham kiriting`);
     }
@@ -45,9 +44,13 @@ class AuthService {
     });
 
     const userDto = new UserDto(user);
-    company.users.push(userDto.id)
-    await company.save()
-    return { userDto };
+    const tokens = tokenService.generateToken({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken)
+    
+
+    company.users.push(userDto.id);
+    await company.save();
+    return { user: userDto, ...tokens };
   }
 
   async companyRegister(data) {
@@ -85,6 +88,9 @@ class AuthService {
     return await tokenService.removeToken(refreshToken);
   }
 
+
+
+  
   async refresh(refreshToken) {
     if (!refreshToken) {
       throw new Error("Bad authorization");
@@ -104,6 +110,13 @@ class AuthService {
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
     return { user: userDto, ...tokens };
   }
+
+
+
+
+
+
+
 
   async checkUser(user) {
     return user;

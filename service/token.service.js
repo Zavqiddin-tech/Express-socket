@@ -25,7 +25,7 @@ class TokenService {
   }
 
   async removeToken(refreshToken) {
-    return await tokenModel.findByIdAndDelete({ refreshToken });
+    return await tokenModel.findOneAndDelete({ refreshToken });
   }
 
   async findToken(refreshToken) {
@@ -39,6 +39,7 @@ class TokenService {
       return null;
     }
   }
+  
   validateAccessToken(token) {
     try {
       return jwt.verify(token, process.env.JWT_ACCESS_KEY);
