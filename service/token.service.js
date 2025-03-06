@@ -1,19 +1,27 @@
 const jwt = require("jsonwebtoken");
-const tokenModel = require("../model/token.model");
+
 
 class TokenService {
   generateToken(payload) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_KEY, {
       expiresIn: "1h",
     });
-    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_KEY, {
-      expiresIn: "1d",
-    });
+    // const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_KEY, {
+    //   expiresIn: "1d",
+    // });
 
-    return { accessToken, refreshToken };
+    return { accessToken };
   }
 
-  async saveToken(userId, refreshToken) {
+  validateAccessToken(token) {
+    try {
+      return jwt.verify(token, process.env.JWT_ACCESS_KEY);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /*  async saveToken(userId, refreshToken) {
     const existToken = await tokenModel.findOne({ user: userId });
     if (existToken) {
       existToken.refreshToken = refreshToken;
@@ -38,15 +46,7 @@ class TokenService {
     } catch (error) {
       return null;
     }
-  }
-  
-  validateAccessToken(token) {
-    try {
-      return jwt.verify(token, process.env.JWT_ACCESS_KEY);
-    } catch (error) {
-      return null;
-    }
-  }
+  } */
 }
 
 module.exports = new TokenService();

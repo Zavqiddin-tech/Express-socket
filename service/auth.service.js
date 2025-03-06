@@ -1,29 +1,28 @@
 const argon2 = require("argon2");
 const tokenService = require("./token.service");
-const companyModel = require("../model/auth/company.model");
-const userModel = require("../model/auth/user.model");
+const userModel = require("../model/user.model");
 const UserDto = require("../dto/user.dto");
 
 class AuthService {
   async register(
+    fName,
+    lName,
+    companyName,
     userName,
     password,
     activated,
-    firstName,
-    lastName,
-    companyId,
     phone,
-    role
+    role,
+    clientCount,
+    debts,
+    detail,
   ) {
     if (role === "admin") {
       throw new Error("admin mavjud");
     }
-    // search company
-    const company = await companyModel.findById(companyId);
+
     const existUser = await userModel.findOne({ userName });
-    if (!company) {
-      throw new Error(`Companiya mavjud emas`);
-    }
+    
     if (existUser) {
       throw new Error(`User ${existUser.userName} oldin ro'yxatdan o'tgan`);
     }
@@ -33,38 +32,26 @@ class AuthService {
     }
     const hashPassword = await argon2.hash(password);
     const user = await userModel.create({
+      fName,
+      lName,
+      companyName,
       userName,
       password: hashPassword,
       activated,
-      firstName,
-      lastName,
-      companyId,
       phone,
       role,
+      clientCount,
+      debts,
+      detail,
     });
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateToken({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken)
     
-
-    company.users.push(userDto.id);
-    await company.save();
     return { user: userDto, ...tokens };
   }
 
-  async companyRegister(data) {
-    const exitCompany = await companyModel.findOne({
-      companyName: data.companyName,
-    });
-
-    if (exitCompany) {
-      throw new Error(`Bu ${data.companyName} oldin ro'yxatdan o'tgan`);
-    }
-
-    const company = await companyModel.create({ ...data });
-    return company;
-  }
+  
 
   async login(userName, password) {
     const user = await userModel.findOne({ userName });
@@ -80,42 +67,8 @@ class AuthService {
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateToken({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
     return { user: userDto, ...tokens };
   }
-
-  async logout(refreshToken) {
-    return await tokenService.removeToken(refreshToken);
-  }
-
-
-
-  
-  async refresh(refreshToken) {
-    if (!refreshToken) {
-      throw new Error("Bad authorization");
-    }
-
-    const userPayload = tokenService.validateRefreshToken(refreshToken);
-    const tokenDB = await tokenService.findToken(refreshToken);
-    if (!userPayload || !tokenDB) {
-      throw new Error("Bad authorization");
-    }
-
-    const user = await userModel.findById(userPayload.id);
-    const userDto = new UserDto(user);
-
-    // token
-    const tokens = tokenService.generateToken({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
-    return { user: userDto, ...tokens };
-  }
-
-
-
-
-
-
 
 
   async checkUser(user) {
@@ -151,14 +104,45 @@ class AuthService {
     }
   }
 
-  async deleteUser(admin, id) {
+
+
+
+
+
+
+
+  /* async logout(refreshToken) {
+    return await tokenService.removeToken(refreshToken);
+  } */
+
+/*   async refresh(refreshToken) {
+    if (!refreshToken) {
+      throw new Error("Bad authorization");
+    }
+
+    const userPayload = tokenService.validateRefreshToken(refreshToken);
+    const tokenDB = await tokenService.findToken(refreshToken);
+    if (!userPayload || !tokenDB) {
+      throw new Error("Bad authorization");
+    }
+
+    const user = await userModel.findById(userPayload.id);
+    const userDto = new UserDto(user);
+
+    // token
+    const tokens = tokenService.generateToken({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+    return { user: userDto, ...tokens };
+  } */
+
+  /* async deleteUser(admin, id) {
     const user = await userModel.findById(id);
     if (admin.role === "admin" && user.role !== "admin") {
       await userModel.findByIdAndDelete(id);
     } else {
       throw new Error("Sizga mumkin emas");
     }
-  }
+  } */
 }
 
 module.exports = new AuthService();

@@ -8,14 +8,15 @@ const userSchema = new Schema(
     userName: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     activated: { type: Boolean, default: true },
+    phone: { type: String },
     role: {
       type: String,
       enum: ["admin", "seller"],
       required: true,
     },
-    clientCount: {type: Number},
-    debts: {type: Number},
-    detail: {type: String}
+    clientCount: { type: Number, default: 0 },
+    debts: { type: Number, default: 0 },
+    detail: { type: String, default: "" },
   },
   { timestamps: true }
 );

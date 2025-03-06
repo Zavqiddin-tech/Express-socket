@@ -4,39 +4,31 @@ class AuthController {
   async register(req, res, next) {
     try {
       const {
+        fName,
+        lName,
+        companyName,
         userName,
         password,
         activated,
-        firstName,
-        lastName,
-        companyId,
         phone,
         role,
+        clientCount,
+        debts,
+        detail,
       } = req.body;
       const data = await authService.register(
+        fName,
+        lName,
+        companyName,
         userName,
         password,
         activated,
-        firstName,
-        lastName,
-        companyId,
         phone,
-        role
+        role,
+        clientCount,
+        debts,
+        detail
       );
-
-      res.cookie("refreshToken", data.refreshToken, {
-        httpOnly: true,
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-      });
-      return res.json(data);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async companyRegister(req, res, next) {
-    try {
-      const data = await authService.companyRegister(req.body);
       return res.json(data);
     } catch (error) {
       next(error);
@@ -47,39 +39,12 @@ class AuthController {
     try {
       const { userName, password } = req.body;
       const data = await authService.login(userName, password);
-      res.cookie("refreshToken", data.refreshToken, {
+      /* res.cookie("refreshToken", data.refreshToken, {
         httpOnly: true,
         secure: true,
         maxAge: 1 * 24 * 60 * 60 * 1000,
-      });
-      return res.json({ ...data, refreshToken: null });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async logout(req, res, next) {
-    try {
-      const { refreshToken } = req.cookies;
-
-      const token = await authService.logout(refreshToken);
-      res.clearCookie("refreshToken");
-      return res.json({ token });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async refresh(req, res, next) {
-    try {
-      const { refreshToken } = req.cookies;
-      const data = await authService.refresh(refreshToken);
-      res.cookie("refreshToken", data.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-      });
-      return res.json({ ...data, refreshToken: null });
+      }); */
+      return res.json({ ...data });
     } catch (error) {
       next(error);
     }
@@ -122,14 +87,40 @@ class AuthController {
     }
   }
 
-  async deleteUser(req, res, next) {
+  /*   async logout(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+
+      const token = await authService.logout(refreshToken);
+      res.clearCookie("refreshToken");
+      return res.json({ token });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async refresh(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+      const data = await authService.refresh(refreshToken);
+      res.cookie("refreshToken", data.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+      });
+      return res.json({ ...data, refreshToken: null });
+    } catch (error) {
+      next(error);
+    }
+  } */
+  /*  async deleteUser(req, res, next) {
     try {
       const data = await authService.deleteUser(req.user, req.params.id);
       return res.json(data);
     } catch (error) {
       next(error);
     }
-  }
+  } */
 }
 
 module.exports = new AuthController();

@@ -20,13 +20,14 @@ app.use(cors());
 
 
 // API endpoints
-app.use("/api/auth", require("./routes/auth.route"));
-app.use("/api/post", require("./routes/post.route"));
+app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/post", require("./routes/post.routes"));
+app.use("/api/client", require("./routes/client.routes"));
 
 //  Mieddleware
 app.use(errorMiddleware);
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 4100;
 const bootstrap = async () => {
   try {
     await mongoose
