@@ -3,6 +3,7 @@ const { Schema, model } = require("mongoose");
 const monitoringSchema = new Schema(
   {
     clientId: { type: Schema.ObjectId, ref: "Client", required: true },
+    tradeId: { type: Schema.ObjectId, ref: "Trade", required: true },
     amount: { type: Number, required: true },
   },
   { timestamps: true }

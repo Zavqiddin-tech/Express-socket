@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const treatmentSchema = new Schema(
+const tradeSchema = new Schema(
   {
     userId: { type: Schema.ObjectId, ref: "User", required: true },
     clientId: { type: Schema.ObjectId, ref: "Client", required: true },
@@ -13,4 +13,4 @@ const treatmentSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = model("Treatment", treatmentSchema);
+module.exports = model("Trade", tradeSchema);
