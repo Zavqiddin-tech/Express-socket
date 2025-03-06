@@ -4,11 +4,11 @@ const tradeSchema = new Schema(
   {
     userId: { type: Schema.ObjectId, ref: "User", required: true },
     clientId: { type: Schema.ObjectId, ref: "Client", required: true },
-    monitoringHistory: [
-      { type: Schema.ObjectId, ref: "Monitoring", },
-    ],
-    text: { type: String, required: true },
-    price: { type: Number, required: true },
+    payHistory: [{ type: Schema.ObjectId, ref: "Pay" }],
+    text: { type: String, required: true, default: "" },
+    price: { type: Number, required: true, default: 0 },
+    paid: { type: Number, required: true, default: 0 },
+  
   },
   { timestamps: true }
 );

@@ -1,6 +1,6 @@
 const clientModel = require("../model/client.model");
 
-class PostServeice {
+class ClientService {
   async getAll(req, res) {
     console.log("test");
     const limit = parseInt(req.query.limit);
@@ -22,4 +22,4 @@ class PostServeice {
   }
 }
 
-module.exports = new PostServeice();
+module.exports = new ClientService();

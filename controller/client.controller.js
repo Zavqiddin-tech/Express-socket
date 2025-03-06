@@ -15,7 +15,7 @@ class ClientController {
 		try {
 			const newClient = await clientService.create(req, res);
 			const io = getSocketInstance()
-			io.emit('newPost', newClient);
+			io.emit('newClient', newClient);
 			res.status(200).json(newClient);
 		} catch (error) {
 			next(error);
