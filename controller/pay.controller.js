@@ -12,6 +12,16 @@ class PayController {
       next(error);
     }
   }
+  async update(req, res, next) {
+    try {
+      const updatePay = await payService.update(req, res);
+      const io = getSocketInstance();
+      io.emit("updatePay", updatePay);
+      res.status(200).json(updatePay);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new PayController();
