@@ -6,6 +6,7 @@ const paySchema = new Schema(
     clientId: { type: Schema.ObjectId, ref: "Client", required: true },
     tradeId: { type: Schema.ObjectId, ref: "Trade", required: true },
     amount: { type: Number, required: true, default: 0 },
+    detail: { type: String, default: "" },
   },
   { timestamps: true }
 );

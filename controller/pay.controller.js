@@ -22,6 +22,16 @@ class PayController {
       next(error);
     }
   }
+  async deletePay(req, res, next) {
+    try {
+      const deletedPay = await payService.deletePay(req, res);
+      const io = getSocketInstance();
+      io.emit("deletePay", deletedPay);
+      res.status(200).json(deletedPay);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new PayController();

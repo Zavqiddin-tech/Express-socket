@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const payModel = require("../model/pay.model");
 const tradeModel = require("../model/trade.model");
 const clientModel = require("../model/client.model");
@@ -41,7 +40,6 @@ class PayService {
     const trade = await tradeModel.findById(pay.tradeId);
     const client = await clientModel.findById(pay.clientId);
 
-
     sum = trade.paid - pay.amount;
     sum += newAmount;
     if (!(trade.price >= sum)) {
@@ -59,6 +57,36 @@ class PayService {
     await pay.save();
 
     return pay;
+  }
+
+  async deletePay(req, res) {
+
+    let oldAmount = 0;
+    const pay = await payModel.findById(req.params.id);
+    if (!pay) {
+      throw new Error("To'lov topilmadi, tekshiring !");
+    }
+
+    const trade = await tradeModel.findById(pay.tradeId);
+    const client = await clientModel.findById(pay.clientId);
+    if (trade && client) {
+      oldAmount = pay.amount;
+
+      trade.paid -= oldAmount;
+      client.totalPurchase -= oldAmount;
+      trade.payHistory = trade.payHistory.filter(
+        (item) => item._id != req.params.id
+      );
+      console.log(trade.payHistory);
+
+      const deletedPay = await payModel.findByIdAndDelete(req.params.id)
+      await trade.save()
+      await client.save()
+
+      return deletedPay;
+    } else {
+      throw new Error("Savdo yoki mijoz topilmadi, tekshiring !");
+    }
   }
 }
 
