@@ -15,21 +15,58 @@ class TradeService {
   }
 
   async create(req, res) {
-    const client = await clientModel.findById(req.body.clientId);
+    const { clientId, ...tradeData } = req.body;
+
+    const client = await clientModel.findById(clientId);
 
     if (!client) {
       throw new Error("Mijoz topilmadi, qayib kiring !");
     }
 
     const newTrade = await tradeModel.create({
-      ...req.body,
+      ...tradeData,
+      clientId: clientId,
       userId: req.user.id,
     });
 
-    client.totalDebt += newTrade.price;
-    await client.save();
+    await clientModel.findByIdAndUpdate(clientId, {
+      $inc: { totalDebt: newTrade.price },
+    });
 
     return newTrade;
+  }
+
+  async update(req, res) {
+    const { text, price } = req.body;
+
+    const trade = await tradeModel.findById(req.params.id);
+    if (!trade) {
+      throw new Error("Savdo topilmadi, qayta kiring !");
+    }
+
+    if (price < trade.paid) {
+      throw new Error("Kam pul kiritildi, tekshiring !");
+    }
+
+    // Atomik yangilanishlar
+    const updatedClient = await clientModel.findByIdAndUpdate(trade.clientId, {
+      $inc: { totalDebt: price - trade.price },
+    });
+    if (!updatedClient) {
+      throw new Error("Mijoz, Savdo yangilanishi muvaffaqiyatsiz bo'ldi!");
+    }
+
+    const updatedTrade = await tradeModel.findByIdAndUpdate(
+      req.params.id,
+      { text, price },
+      { new: true }
+    );
+
+    if (!updatedTrade) {
+      throw new Error("Savdo yangilanishi muvaffaqiyatsiz bo'ldi!");
+    }
+
+    return updatedTrade;
   }
 }
 

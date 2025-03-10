@@ -12,12 +12,13 @@ class PayController {
       next(error);
     }
   }
+  // pay controller.js
   async update(req, res, next) {
     try {
-      const updatePay = await payService.update(req, res);
+      const updatedPay = await payService.update(req, res);
       const io = getSocketInstance();
-      io.emit("updatePay", updatePay);
-      res.status(200).json(updatePay);
+      io.emit("updatePay", updatedPay);
+      res.status(200).json(updatedPay);
     } catch (error) {
       next(error);
     }

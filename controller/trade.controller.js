@@ -21,6 +21,17 @@ class TradeController {
 			next(error);
 		}
 	}
+	
+	async update(req, res, next) {
+		try {
+			const updatedTrade = await tradeService.update(req, res);
+			const io = getSocketInstance()
+			io.emit('updateTrade', updatedTrade);
+			res.status(200).json(updatedTrade);
+		} catch (error) {
+			next(error);
+		}
+	}
 }
 
 module.exports = new TradeController();

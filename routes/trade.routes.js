@@ -5,5 +5,6 @@ const tradeController = require("../controller/trade.controller");
 
 router.get("/get-all", authorization, tradeController.getAll);
 router.post("/create", authorization, tradeController.create);
+router.post("/update/:id", authorization, tradeController.update);
 
 module.exports = router;
