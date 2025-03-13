@@ -1,3 +1,4 @@
+const userModel = require("../model/user.model");
 const clientModel = require("../model/client.model");
 
 class ClientService {
@@ -18,6 +19,11 @@ class ClientService {
       ...req.body,
       userId: req.user.id,
     });
+
+    await userModel.findByIdAndUpdate(req.user.id, {
+      $inc: { clientCount: 1 },
+    });
+
     return newClient;
   }
 }

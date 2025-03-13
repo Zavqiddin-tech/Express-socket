@@ -1,3 +1,4 @@
+const userModel = require("../model/user.model");
 const tradeModel = require("../model/trade.model");
 const clientModel = require("../model/client.model");
 
@@ -17,8 +18,11 @@ class TradeService {
   async create(req, res) {
     const { clientId, ...tradeData } = req.body;
 
-    const client = await clientModel.findById(clientId);
+    if (!(tradeData.price > 0)) {
+      throw new Error("0 dan katta son kiriting, tekshiring !");
+    }
 
+    const client = await clientModel.findById(clientId);
     if (!client) {
       throw new Error("Mijoz topilmadi, qayib kiring !");
     }
@@ -32,12 +36,19 @@ class TradeService {
     await clientModel.findByIdAndUpdate(clientId, {
       $inc: { totalDebt: newTrade.price },
     });
+    await userModel.findByIdAndUpdate(req.user.id, {
+      $inc: { debts: newTrade.price },
+    });
 
     return newTrade;
   }
 
   async update(req, res) {
     const { text, price } = req.body;
+
+    if (!(price > 0)) {
+      throw new Error("0 dan katta son kiriting, tekshiring !");
+    }
 
     const trade = await tradeModel.findById(req.params.id);
     if (!trade) {
@@ -53,7 +64,14 @@ class TradeService {
       $inc: { totalDebt: price - trade.price },
     });
     if (!updatedClient) {
-      throw new Error("Mijoz, Savdo yangilanishi muvaffaqiyatsiz bo'ldi!");
+      throw new Error("Mijoz yangilanishida xatolik bor !");
+    }
+
+    await userModel.findByIdAndUpdate(req.user.id, {
+      $inc: { debts: price - trade.price },
+    });
+    if (!updatedUser) {
+      throw new Error("Foydalanuvchi yangilanishida xatolik bor");
     }
 
     const updatedTrade = await tradeModel.findByIdAndUpdate(
@@ -61,10 +79,6 @@ class TradeService {
       { text, price },
       { new: true }
     );
-
-    if (!updatedTrade) {
-      throw new Error("Savdo yangilanishi muvaffaqiyatsiz bo'ldi!");
-    }
 
     return updatedTrade;
   }

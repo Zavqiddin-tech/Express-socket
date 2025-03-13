@@ -48,7 +48,7 @@ class AuthService {
     const userDto = new UserDto(user);
     const tokens = tokenService.generateToken({ ...userDto });
     
-    return { user: userDto, ...tokens };
+    return { user: { ...userDto, id: null }, ...tokens };
   }
 
   
@@ -67,7 +67,7 @@ class AuthService {
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateToken({ ...userDto });
-    return { user: userDto, ...tokens };
+    return { user: { ...userDto, id: null }, ...tokens }
   }
 
 
