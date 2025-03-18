@@ -3,12 +3,10 @@ const clientModel = require("../model/client.model");
 
 class ClientService {
   async getAll(req, res) {
-    console.log("test");
     const limit = parseInt(req.query.limit);
-    console.log(limit);
 
     const allClients = await clientModel
-      .find()
+      .find({ userId: req.user.id })
       .sort({ createdAt: -1 })
       .limit(limit);
     return allClients;

@@ -2,11 +2,12 @@ const postModel = require("../model/post.model");
 
 class PostService {
   async getAll(req, res) {
-    console.log('test');
-    const limit = parseInt(req.query.limit)
-    console.log(limit);
+    const limit = parseInt(req.query.limit);
 
-    const allPosts = await postModel.find().sort({createdAt: -1}).limit(limit);
+    const allPosts = await postModel
+      .find({ user: req.user.id })
+      .sort({ createdAt: -1 })
+      .limit(limit);
     return allPosts;
   }
 
@@ -14,7 +15,7 @@ class PostService {
     console.log(req.user);
     const newPost = await postModel.create({
       ...req.body,
-      user: req.user.id
+      user: req.user.id,
     });
     return newPost;
   }
