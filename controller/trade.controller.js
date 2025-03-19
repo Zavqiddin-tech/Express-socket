@@ -4,8 +4,16 @@ const {getSocketInstance} = require("../socket")
 class TradeController {
 	async getAll(req, res, next) {
 		try {
-			const allCLients = await tradeService.getAll(req, res);
-			res.status(200).json(allCLients);
+			const allTrades = await tradeService.getAll(req, res);
+			res.status(200).json(allTrades);
+		} catch (error) {
+			next(error);
+		}
+	}
+	async getAllByClient(req, res, next) {
+		try {
+			const allByClient = await tradeService.getAllByClient(req, res);
+			res.status(200).json(allByClient);
 		} catch (error) {
 			next(error);
 		}
@@ -15,7 +23,7 @@ class TradeController {
 		try {
 			const newTrade = await tradeService.create(req, res);
 			const io = getSocketInstance()
-			io.emit('newTrade', newTrade);
+			io.emit(`newTrade/${newTrade.newTrade.userId}`, newTrade);
 			res.status(200).json(newTrade);
 		} catch (error) {
 			next(error);

@@ -12,6 +12,12 @@ class ClientService {
     return allClients;
   }
 
+  async getOne(req, res) {
+    const client = await clientModel.findById(req.params.id);
+
+    return client;
+  }
+
   async create(req, res) {
     const newClient = await clientModel.create({
       ...req.body,

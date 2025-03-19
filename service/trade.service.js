@@ -4,12 +4,21 @@ const clientModel = require("../model/client.model");
 
 class TradeService {
   async getAll(req, res) {
-    console.log("test");
     const limit = parseInt(req.query.limit);
-    console.log(limit);
 
     const allTrades = await tradeModel
-      .find()
+      .find({ userId: req.user.id })
+      .sort({ createdAt: -1 })
+      .limit(limit);
+    return allTrades;
+  }
+
+  async getAllByClient(req, res) {
+    const limit = parseInt(req.query.limit);
+    console.log(limit);
+    console.log(req.params.id);
+    const allTrades = await tradeModel
+      .find({ clientId: req.params.id })
       .sort({ createdAt: -1 })
       .limit(limit);
     return allTrades;
@@ -33,14 +42,18 @@ class TradeService {
       userId: req.user.id,
     });
 
-    await clientModel.findByIdAndUpdate(clientId, {
-      $inc: { totalDebt: newTrade.price },
-    });
+    const newClient = await clientModel.findByIdAndUpdate(
+      clientId,
+      {
+        $inc: { totalDebt: newTrade.price },
+      },
+      { new: true }
+    );
     await userModel.findByIdAndUpdate(req.user.id, {
       $inc: { debts: newTrade.price },
     });
 
-    return newTrade;
+    return { newTrade, newClient };
   }
 
   async update(req, res) {

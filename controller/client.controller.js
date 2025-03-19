@@ -10,6 +10,14 @@ class ClientController {
 			next(error);
 		}
 	}
+	async getOne(req, res, next) {
+		try {
+			const client = await clientService.getOne(req, res);
+			res.status(200).json(client);
+		} catch (error) {
+			next(error);
+		}
+	}
 
 	async create(req, res, next) {
 		try {
