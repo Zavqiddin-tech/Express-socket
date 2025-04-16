@@ -19,6 +19,7 @@ class TradeService {
     console.log(req.params.id);
     const allTrades = await tradeModel
       .find({ clientId: req.params.id })
+      .populate("payHistory")
       .sort({ createdAt: -1 })
       .limit(limit);
     return allTrades;

@@ -6,7 +6,7 @@ class PayController {
     try {
       const newPay = await payService.create(req, res);
       const io = getSocketInstance();
-      io.emit("newPay", newPay);
+      io.emit(`newPay/${req.user.id}`, newPay);
       res.status(200).json(newPay);
     } catch (error) {
       next(error);

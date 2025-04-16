@@ -23,7 +23,7 @@ class TradeController {
 		try {
 			const newTrade = await tradeService.create(req, res);
 			const io = getSocketInstance()
-			io.emit(`newTrade/${newTrade.newTrade.userId}`, newTrade);
+			io.emit(`newTrade/${req.user.id}`, newTrade);
 			res.status(200).json(newTrade);
 		} catch (error) {
 			next(error);

@@ -9,7 +9,7 @@ class PayService {
     if (!(amount > 0)) {
       throw new Error("0 dan katta son kiriting, tekshiring !");
     }
-    
+
     const trade = await tradeModel.findById(tradeId);
     const client = await clientModel.findById(clientId);
 
@@ -35,22 +35,30 @@ class PayService {
       throw new Error("Foydalanuvchi yangilanishida nosozlik bor");
     }
 
-    const updatedClient = await clientModel.findByIdAndUpdate(clientId, {
-      $inc: { totalPurchase: amount },
-    });
+    const updatedClient = await clientModel.findByIdAndUpdate(
+      clientId,
+      {
+        $inc: { totalPurchase: amount },
+      },
+      { new: true }
+    );
     if (!updatedClient) {
       throw new Error("Foydalanuvchi yangilanishida nosozlik bor");
     }
 
-    const updatedTrade = await tradeModel.findByIdAndUpdate(tradeId, {
-      $push: { payHistory: { $each: [newPay._id], $position: 0 } },
-      $inc: { paid: amount },
-    });
+    const updatedTrade = await tradeModel.findByIdAndUpdate(
+      tradeId,
+      {
+        $push: { payHistory: { $each: [newPay._id], $position: 0 } },
+        $inc: { paid: amount },
+      },
+      { new: true }
+    );
     if (!updatedTrade) {
       throw new Error("Savdo yangilanishida nosozlik bor");
     }
 
-    return newPay;
+    return { newPay, updatedClient };
   }
 
   async update(req, res) {
