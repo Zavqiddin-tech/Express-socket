@@ -13,6 +13,7 @@ class AuthController {
         phone,
         role,
         clientCount,
+        totalPay,
         debts,
         detail,
       } = req.body;
@@ -26,6 +27,7 @@ class AuthController {
         phone,
         role,
         clientCount,
+        totalPay,
         debts,
         detail
       );
@@ -53,8 +55,8 @@ class AuthController {
   // check
   async checkUser(req, res, next) {
     try {
-      const admin = await authService.checkUser(req.user);
-      return res.json(admin);
+      const user = await authService.checkUser(req.user.id);
+      return res.json(user);
     } catch (error) {
       next(error);
     }

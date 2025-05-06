@@ -14,6 +14,7 @@ class AuthService {
     phone,
     role,
     clientCount,
+    pay,
     debts,
     detail,
   ) {
@@ -41,12 +42,13 @@ class AuthService {
       phone,
       role,
       clientCount,
+      pay,
       debts,
       detail,
     });
 
     const userDto = new UserDto(user);
-    const tokens = tokenService.generateToken({ ...userDto });
+    const tokens = tokenService.generateToken({ id: userDto.id, userName: userDto.userName, companyName: userDto.companyName, role: userDto.role })
     
     return { user: { ...userDto, id: null }, ...tokens };
   }
@@ -64,6 +66,9 @@ class AuthService {
     if (!isPassword) {
       throw new Error("Parol xato");
     }
+    if (!user.activated) {
+      throw new Error("Sizning akkauntingiz bloklangan");
+    }
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateToken({ ...userDto });
@@ -71,13 +76,15 @@ class AuthService {
   }
 
 
-  async checkUser(user) {
-    return user;
+  async checkUser(id) {
+    const user = await userModel.findById(id);
+    const userDto = new UserDto(user);
+    return userDto;
   }
 
   async checkAdmin(user, res) {
     if (user.role !== "admin") {
-      res.status(401).json({ message: "sizga bu yerga kira olmaysiz" });
+      res.status(401).json({ message: "Ruxsat berilmagan" });
     }
   }
 

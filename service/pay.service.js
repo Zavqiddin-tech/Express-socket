@@ -29,7 +29,7 @@ class PayService {
     });
 
     const updatedUser = await userModel.findByIdAndUpdate(req.user.id, {
-      $inc: { debts: -amount },
+      $inc: { debts: -amount, totalPay: amount },
     });
     if (!updatedUser) {
       throw new Error("Foydalanuvchi yangilanishida nosozlik bor");
@@ -84,7 +84,7 @@ class PayService {
 
     // Atomik yangilanishlar
     const updatedUser = await userModel.findByIdAndUpdate(req.user.id, {
-      $inc: { debts: pay.amount - amount },
+      $inc: { debts: pay.amount - amount, totalPay: amount - pay.amount },
     });
     if (!updatedUser) {
       throw new Error("Foydalanuvchi yangilanishida nosozlik bor");
@@ -123,7 +123,7 @@ class PayService {
     }
 
     const updatedUser = await userModel.findByIdAndUpdate(req.user.id, {
-      $inc: { debts: pay.amount },
+      $inc: { debts: pay.amount, totalPay: -pay.amount },
     });
     if (!updatedUser) {
       throw new Error("Foydalanuvchi yangilanishida xatolik bor");

@@ -8,6 +8,7 @@ module.exports = class UserDto {
   phone;
   role;
   clientCount;
+  totalPay;
   debts;
   detail;
 
@@ -21,6 +22,7 @@ module.exports = class UserDto {
     this.phone = model.phone;
     this.role = model.role;
     this.clientCount = model.clientCount;
+    this.totalPay = model.totalPay;
     this.debts = model.debts;
     this.detail = model.detail;
   }

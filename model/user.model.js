@@ -15,6 +15,7 @@ const userSchema = new Schema(
       required: true,
     },
     clientCount: { type: Number, default: 0 },
+    totalPay: { type: Number, default: 0 },
     debts: { type: Number, default: 0 },
     detail: { type: String, default: "" },
   },
