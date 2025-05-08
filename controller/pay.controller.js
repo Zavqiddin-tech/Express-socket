@@ -33,6 +33,14 @@ class PayController {
       next(error);
     }
   }
+  async getTodayPay(req, res, next) {
+    try {
+      const todayPay = await payService.getTodayPay(req, res);
+      res.status(200).json(todayPay);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new PayController();

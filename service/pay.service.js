@@ -2,6 +2,7 @@ const userModel = require("../model/user.model");
 const payModel = require("../model/pay.model");
 const tradeModel = require("../model/trade.model");
 const clientModel = require("../model/client.model");
+const mongoose = require('mongoose');
 
 class PayService {
   async create(req, res) {
@@ -148,6 +149,37 @@ class PayService {
     const deletedPay = await payModel.findByIdAndDelete(payId);
 
     return deletedPay;
+  }
+
+  async getTodayPay(req, res) {
+    console.log(req.user.id);
+    const now = new Date();
+    const startOfDay = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
+    const endOfDay = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
+    );
+
+    const result = await payModel.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(req.user.id), 
+          createdAt: {
+            $gte: startOfDay,
+            $lt: endOfDay,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    return result[0]?.totalAmount || 0;
   }
 }
 
