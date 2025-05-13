@@ -30,6 +30,19 @@ class ClientService {
 
     return newClient;
   }
+
+  async search(req, res) {
+    const limit = req.query.limit
+    const name = req.query.name;
+    const clients = await clientModel.find({
+      userId: req.user.id,
+      $or: [
+        { fName: { $regex: name, $options: "i" } },
+        { lName: { $regex: name, $options: "i" } },
+      ],
+    }).limit(limit);
+    return clients;
+  }
 }
 
 module.exports = new ClientService();

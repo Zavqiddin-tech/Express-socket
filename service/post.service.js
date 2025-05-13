@@ -12,7 +12,6 @@ class PostService {
   }
 
   async create(req, res) {
-    console.log(req.user);
     const newPost = await postModel.create({
       ...req.body,
       user: req.user.id,

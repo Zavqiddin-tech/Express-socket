@@ -1,5 +1,4 @@
 const express = require("express");
-const { createServer } = require("http");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const fileUpload = require("express-fileupload");
@@ -7,11 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./middleware/error.middleware");
 const app = express();
-const httpServer = createServer(app);
-// socket
-const { initSocket } = require("./socket");
-initSocket(httpServer);
-// socket
+
 app.use(express.json());
 app.use(express.static("static"));
 app.use(cookieParser({}));
@@ -36,7 +31,7 @@ const bootstrap = async () => {
     await mongoose
       .connect(process.env.DB_URL)
       .then(() => console.log("Connected DB"));
-    httpServer.listen(PORT, () => {
+    app.listen(PORT, () => {
       console.log(`Listening on - ${PORT}`);
     });
   } catch (error) {

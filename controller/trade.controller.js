@@ -1,5 +1,4 @@
 const tradeService = require("../service/trade.service");
-const {getSocketInstance} = require("../socket")
 
 class TradeController {
 	async getAll(req, res, next) {
@@ -22,8 +21,6 @@ class TradeController {
 	async create(req, res, next) {
 		try {
 			const newTrade = await tradeService.create(req, res);
-			const io = getSocketInstance()
-			io.emit(`newTrade/${req.user.id}`, newTrade);
 			res.status(200).json(newTrade);
 		} catch (error) {
 			next(error);
@@ -33,8 +30,6 @@ class TradeController {
 	async update(req, res, next) {
 		try {
 			const updatedTrade = await tradeService.update(req, res);
-			const io = getSocketInstance()
-			io.emit('updateTrade', updatedTrade);
 			res.status(200).json(updatedTrade);
 		} catch (error) {
 			next(error);

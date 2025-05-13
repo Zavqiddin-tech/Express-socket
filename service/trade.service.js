@@ -15,8 +15,6 @@ class TradeService {
 
   async getAllByClient(req, res) {
     const limit = parseInt(req.query.limit);
-    console.log(limit);
-    console.log(req.params.id);
     const allTrades = await tradeModel
       .find({ clientId: req.params.id })
       .populate("payHistory")

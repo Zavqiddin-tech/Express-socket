@@ -152,7 +152,6 @@ class PayService {
   }
 
   async getTodayPay(req, res) {
-    console.log(req.user.id);
     const now = new Date();
     const startOfDay = new Date(
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())

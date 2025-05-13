@@ -1,5 +1,4 @@
 const clientService = require("../service/client.service");
-const {getSocketInstance} = require("../socket")
 
 class ClientController {
 	async getAll(req, res, next) {
@@ -22,9 +21,16 @@ class ClientController {
 	async create(req, res, next) {
 		try {
 			const newClient = await clientService.create(req, res);
-			const io = getSocketInstance()
-			io.emit(`newClient/${newClient.userId}`, newClient);
 			res.status(200).json(newClient);
+		} catch (error) {
+			next(error);
+		}
+	}
+
+	async search(req, res, next) {
+		try {
+			const clients = await clientService.search(req, res);
+			res.status(200).json(clients);
 		} catch (error) {
 			next(error);
 		}
