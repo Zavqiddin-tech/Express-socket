@@ -2,14 +2,22 @@ const express = require("express");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const fileUpload = require("express-fileupload");
+const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./middleware/error.middleware");
 const app = express();
 
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+})
+
 app.use(express.json());
-app.use(express.static("static"));
 app.use(cookieParser({}));
+app.use(limiter)
+app.use(express.static("static"));
 app.use(fileUpload({}));
 app.use(cors());
 
